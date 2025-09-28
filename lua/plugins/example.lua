@@ -1,6 +1,95 @@
 -- since this is just an example spec, don't actually load anything here and return an empty spec
 -- stylua: ignore
-if true then return {} end
+if true then return {
+  {"folke/flash.nvim",
+    keys = {
+      { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
+      { "S", mode = { "n", "o", "x" }, false },
+      { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
+      { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+      { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+      -- Simulate nvim-treesitter incremental selection
+      { "<c-space>", mode = { "n", "o", "x" },
+        function()
+          require("flash").treesitter({
+            actions = {
+              ["<c-space>"] = "next",
+              ["<BS>"] = "prev"
+            }
+          }) 
+        end, desc = "Treesitter Incremental Selection" },
+    }
+  },
+  { "nvim-mini/mini.files",
+  opts = {
+    windows = {
+      preview = true,
+      width_focus = 30,
+      width_preview = 30,
+    },
+    options = {
+      -- Whether to use for editing directories
+      -- Disabled by default in LazyVim because neo-tree is used for that
+      use_as_default_explorer = false,
+    },
+  },
+  keys = {
+    {
+      "<leader>fm",
+      function()
+        ---@type string
+        local me = vim.api.nvim_buf_get_name(0)
+        if vim.startswith(me, "term") then
+          me = vim.loop.cwd() or vim.fn.getcwd()
+        end
+
+        require("mini.files").open(me, true)
+      end,
+      desc = "Open mini.files (directory of current file)",
+    },
+    {
+      "<leader>fM",
+      function()
+        require("mini.files").open(vim.loop.cwd(), true)
+      end,
+      desc = "Open mini.files (cwd)",
+    },
+  },
+  config = function(_, opts)
+    require("mini.files").setup(opts)
+
+    local show_dotfiles = true
+    local filter_show = function()
+      return true
+    end
+    local filter_hide = function(fs_entry)
+      return not vim.startswith(fs_entry.name, ".")
+    end
+
+    local toggle_dotfiles = function()
+      show_dotfiles = not show_dotfiles
+      local new_filter = show_dotfiles and filter_show or filter_hide
+      require("mini.files").refresh({ content = { filter = new_filter } })
+    end
+
+    vim.api.nvim_create_autocmd("User", {
+      pattern = "MiniFilesBufferCreate",
+      callback = function(args)
+        local buf_id = args.data.buf_id
+        -- Tweak left-hand side of mapping to your liking
+        vim.keymap.set("n", "g.", toggle_dotfiles, { buffer = buf_id })
+      end,
+    })
+
+    vim.api.nvim_create_autocmd("User", {
+      pattern = "MiniFilesActionRename",
+      callback = function(event)
+        require("lazyvim.util").lsp.on_rename(event.data.from, event.data.to)
+      end,
+    })
+  end,
+  }
+} end
 
 -- every spec file under the "plugins" directory will be loaded automatically by lazy.nvim
 --
