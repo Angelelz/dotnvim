@@ -21,74 +21,132 @@ if true then return {
     }
   },
   { "nvim-mini/mini.files",
-  opts = {
-    windows = {
-      preview = true,
-      width_focus = 30,
-      width_preview = 30,
+    opts = {
+      windows = {
+        preview = true,
+        width_focus = 30,
+        width_preview = 30,
+      },
+      options = {
+        -- Whether to use for editing directories
+        -- Disabled by default in LazyVim because neo-tree is used for that
+        use_as_default_explorer = false,
+      },
     },
-    options = {
-      -- Whether to use for editing directories
-      -- Disabled by default in LazyVim because neo-tree is used for that
-      use_as_default_explorer = false,
+    keys = {
+      {
+        "<leader>fm",
+        function()
+          ---@type string
+          local me = vim.api.nvim_buf_get_name(0)
+          if vim.startswith(me, "term") then
+            me = vim.loop.cwd() or vim.fn.getcwd()
+          end
+
+          require("mini.files").open(me, true)
+        end,
+        desc = "Open mini.files (directory of current file)",
+      },
+      {
+        "<leader>fM",
+        function()
+          require("mini.files").open(vim.loop.cwd(), true)
+        end,
+        desc = "Open mini.files (cwd)",
+      },
+    },
+    config = function(_, opts)
+      require("mini.files").setup(opts)
+
+      local show_dotfiles = true
+      local filter_show = function()
+        return true
+      end
+      local filter_hide = function(fs_entry)
+        return not vim.startswith(fs_entry.name, ".")
+      end
+
+      local toggle_dotfiles = function()
+        show_dotfiles = not show_dotfiles
+        local new_filter = show_dotfiles and filter_show or filter_hide
+        require("mini.files").refresh({ content = { filter = new_filter } })
+      end
+
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "MiniFilesBufferCreate",
+        callback = function(args)
+          local buf_id = args.data.buf_id
+          -- Tweak left-hand side of mapping to your liking
+          vim.keymap.set("n", "g.", toggle_dotfiles, { buffer = buf_id })
+        end,
+      })
+
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "MiniFilesActionRename",
+        callback = function(event)
+          require("lazyvim.util").lsp.on_rename(event.data.from, event.data.to)
+        end,
+      })
+    end,
+  },
+    {
+    "neovim/nvim-lspconfig",
+    opts = {
+      servers = {
+        tailwindcss = {
+          root_dir = require("lspconfig").util.root_pattern("package.json", "tailwind.config.js", "tailwind.config.ts"),
+        },
+      },
     },
   },
-  keys = {
-    {
-      "<leader>fm",
-      function()
-        ---@type string
-        local me = vim.api.nvim_buf_get_name(0)
-        if vim.startswith(me, "term") then
-          me = vim.loop.cwd() or vim.fn.getcwd()
-        end
-
-        require("mini.files").open(me, true)
-      end,
-      desc = "Open mini.files (directory of current file)",
-    },
-    {
-      "<leader>fM",
-      function()
-        require("mini.files").open(vim.loop.cwd(), true)
-      end,
-      desc = "Open mini.files (cwd)",
+  {
+    "neovim/nvim-lspconfig",
+    opts = {
+      servers = {
+        vtsls = {
+          settings = {
+            typescript = {
+              inlayHints = {
+                enumMemberValues = { enabled = false },
+                functionLikeReturnTypes = { enabled = false },
+                parameterNames = { enabled = "none" },  -- Disable literals
+                parameterTypes = { enabled = false },
+                propertyDeclarationTypes = { enabled = false },
+                variableTypes = { enabled = false },
+              },
+              suggest = {
+                -- completeFunctionCalls = false,  -- Disable function call completions
+              },
+            },
+            javascript = {
+              inlayHints = {
+                enumMemberValues = { enabled = false },
+                functionLikeReturnTypes = { enabled = false },
+                parameterNames = { enabled = "none" },
+                parameterTypes = { enabled = false },
+                propertyDeclarationTypes = { enabled = false },
+                variableTypes = { enabled = false },
+              },
+              suggest = {
+                -- completeFunctionCalls = false,
+              },
+            },
+            vtsls = {
+              autoUseWorkspaceTsdk = true,
+              enableMoveToFileCodeAction = true,
+              experimental = {
+                completion = {
+                  -- enableServerSideFuzzyMatch = false,  -- Disable fuzzy matching
+                },
+                maxInlayHintLength = 30,
+              },
+            },
+          },
+        },
+      },
     },
   },
-  config = function(_, opts)
-    require("mini.files").setup(opts)
-
-    local show_dotfiles = true
-    local filter_show = function()
-      return true
-    end
-    local filter_hide = function(fs_entry)
-      return not vim.startswith(fs_entry.name, ".")
-    end
-
-    local toggle_dotfiles = function()
-      show_dotfiles = not show_dotfiles
-      local new_filter = show_dotfiles and filter_show or filter_hide
-      require("mini.files").refresh({ content = { filter = new_filter } })
-    end
-
-    vim.api.nvim_create_autocmd("User", {
-      pattern = "MiniFilesBufferCreate",
-      callback = function(args)
-        local buf_id = args.data.buf_id
-        -- Tweak left-hand side of mapping to your liking
-        vim.keymap.set("n", "g.", toggle_dotfiles, { buffer = buf_id })
-      end,
-    })
-
-    vim.api.nvim_create_autocmd("User", {
-      pattern = "MiniFilesActionRename",
-      callback = function(event)
-        require("lazyvim.util").lsp.on_rename(event.data.from, event.data.to)
-      end,
-    })
-  end,
-  }
+  { "folke/snacks.nvim", opts = { scroll = { enabled = false } } }
 } end
 
 -- every spec file under the "plugins" directory will be loaded automatically by lazy.nvim
