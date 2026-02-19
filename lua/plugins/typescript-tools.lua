@@ -1,0 +1,26 @@
+return {
+  -- "pmizio/typescript-tools.nvim",
+  -- dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+  -- opts = {
+  --   on_attach = function(client, bufnr)
+  --     -- Reuse LazyVim's default on_attach (or add custom keymaps)
+  --     local oA = require("lazyvim.plugins.lsp").on_attach
+  --     if oA then
+  --       oA(client, bufnr)
+  --     end
+  --   end,
+  --   settings = {
+  --     tsserver_locale = "en",
+  --     -- Use project-local TypeScript
+  --     separate_diagnostic_server = false,
+  --     expose_as_code_action = "all",
+  --     -- Performance tweaks for large codebases
+  --     complete_function_calls = false, -- Disable if slow
+  --     -- Inlay hints (disable subsets if needed)
+  --     inlayHints = {
+  --       only_current_line = true, -- Hint only current line for speed
+  --       autoImportOnlyWithSeenTypes = true,
+  --     },
+  --   },
+  -- },
+}

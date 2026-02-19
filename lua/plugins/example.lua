@@ -89,63 +89,135 @@ if true then return {
       })
     end,
   },
-    {
-    "neovim/nvim-lspconfig",
-    opts = {
-      servers = {
-        tailwindcss = {
-          root_dir = require("lspconfig").util.root_pattern("package.json", "tailwind.config.js", "tailwind.config.ts"),
+    -- {
+    -- "neovim/nvim-lspconfig",
+    -- opts = {
+    --   servers = {
+    --     tailwindcss = {
+    --       filetypes = {
+    --         "html", "css", "javascript", "javascriptreact", "typescript", "typescriptreact", "vue", "svelte", "astro"
+    --       },
+    --       init_options = {
+    --         -- Optional: Path to Tailwind config if non-standard
+    --         -- config = "/path/to/tailwind.config.js"
+    --       },
+    --     },
+    --     vtsls = {
+    --       settings = {
+    --         typescript = {
+    --           inlayHints = {
+    --             enumMemberValues = { enabled = false },
+    --             functionLikeReturnTypes = { enabled = false },
+    --             parameterNames = { enabled = "none" },  -- Disable literals
+    --             parameterTypes = { enabled = false },
+    --             propertyDeclarationTypes = { enabled = false },
+    --             variableTypes = { enabled = false },
+    --           },
+    --           suggest = {
+    --             -- completeFunctionCalls = false,  -- Disable function call completions
+    --           },
+    --         },
+    --         javascript = {
+    --           inlayHints = {
+    --             enumMemberValues = { enabled = false },
+    --             functionLikeReturnTypes = { enabled = false },
+    --             parameterNames = { enabled = "none" },
+    --             parameterTypes = { enabled = false },
+    --             propertyDeclarationTypes = { enabled = false },
+    --             variableTypes = { enabled = false },
+    --           },
+    --           suggest = {
+    --             -- completeFunctionCalls = false,
+    --           },
+    --         },
+    --         -- vtsls = {
+    --         --   autoUseWorkspaceTsdk = true,
+    --         --   enableMoveToFileCodeAction = true,
+    --         --   experimental = {
+    --         --     completion = {
+    --         --       enableServerSideFuzzyMatch = false,  -- Disable fuzzy matching
+    --         --     },
+    --         --     maxInlayHintLength = 30,
+    --         --   },
+    --         -- },
+    --       },
+    --     },
+    --   },
+    -- },
+    -- opts = {
+    --   servers = {
+    --     tailwindcss = {
+    --       root_dir = require("lspconfig").util.root_pattern("tailwind.config.js", "tailwind.config.ts"),
+    --     },
+    --   },
+    --   setup = {
+    --     tailwindcss = function(_, opts)
+    --       -- Ensure only one instance by overriding default root_dir
+    --       opts.root_dir = require("lspconfig").util.root_pattern("tailwind.config.js", "tailwind.config.ts")
+    --     end,
+    --   },
+    -- },
+  -- },
+  {
+  "neovim/nvim-lspconfig",
+  opts = {
+    servers = {
+      tailwindcss = {
+        filetypes = {
+          "html", "css", "javascript", "javascriptreact",
+          "typescript", "typescriptreact", "vue", "svelte", "astro",
         },
       },
-    },
-  },
-  {
-    "neovim/nvim-lspconfig",
-    opts = {
-      servers = {
-        vtsls = {
-          settings = {
-            typescript = {
-              inlayHints = {
-                enumMemberValues = { enabled = false },
-                functionLikeReturnTypes = { enabled = false },
-                parameterNames = { enabled = "none" },  -- Disable literals
-                parameterTypes = { enabled = false },
-                propertyDeclarationTypes = { enabled = false },
-                variableTypes = { enabled = false },
-              },
-              suggest = {
-                -- completeFunctionCalls = false,  -- Disable function call completions
-              },
+
+      vtsls = {
+        -- cmd = { "node", "--max-old-space-size=16384", vim.fn.stdpath("data") .. "/mason/bin/vtsls", "--stdio" },
+        autoUseWorkspaceTsdk = true,
+        settings = {
+          -- Your inlay-hint disables (unchanged)
+            complete_function_calls = false,
+       vtsls = {
+         experimental = {
+           completion = {
+             enableServerSideFuzzyMatch = false,
+           },
+         },
+       },
+          typescript = {
+            inlayHints = {
+              enumMemberValues = { enabled = false },
+              functionLikeReturnTypes = { enabled = false },
+              parameterNames = { enabled = "none" },
+              parameterTypes = { enabled = false },
+              propertyDeclarationTypes = { enabled = false },
+              variableTypes = { enabled = false },
             },
-            javascript = {
-              inlayHints = {
-                enumMemberValues = { enabled = false },
-                functionLikeReturnTypes = { enabled = false },
-                parameterNames = { enabled = "none" },
-                parameterTypes = { enabled = false },
-                propertyDeclarationTypes = { enabled = false },
-                variableTypes = { enabled = false },
-              },
-              suggest = {
-                -- completeFunctionCalls = false,
-              },
+            tsserver = {
+              -- log = "verbose",
+              logDirectory = vim.fn.stdpath("cache") .. "/vtsls-logs",
+                maxTsServerMemory = 16384,
             },
-            vtsls = {
-              autoUseWorkspaceTsdk = true,
-              enableMoveToFileCodeAction = true,
-              experimental = {
-                completion = {
-                  -- enableServerSideFuzzyMatch = false,  -- Disable fuzzy matching
-                },
-                maxInlayHintLength = 30,
-              },
+          },
+          javascript = {
+            inlayHints = {
+              enumMemberValues = { enabled = false },
+              functionLikeReturnTypes = { enabled = false },
+              parameterNames = { enabled = "none" },
+              parameterTypes = { enabled = false },
+              propertyDeclarationTypes = { enabled = false },
+              variableTypes = { enabled = false },
+            },
+            tsserver = {
+              -- log = "verbose",
+              logDirectory = vim.fn.stdpath("cache") .. "/vtsls-logs",
+                maxTsServerMemory = 16384,
             },
           },
         },
+
       },
     },
   },
+},
   { "folke/snacks.nvim", opts = { scroll = { enabled = false } } }
 } end
 

@@ -18,7 +18,7 @@ vim.opt.termguicolors = true
 vim.opt.scrolloff = 8
 vim.opt.signcolumn = "yes"
 
-vim.opt.updatetime = 50
+-- vim.opt.updatetime = 50
 
 -- vim.opt.colorcolumn = "80"
 
@@ -35,5 +35,9 @@ vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 vim.opt.ic = false
 vim.opt.wrap = true
 vim.opt.timeoutlen = 500
+vim.o.winborder = "rounded"
 
+--print(vim.inspect(vim.lsp.get_clients()))
+
+print(vim.fn.stdpath("data"))
 return {}
