@@ -183,6 +183,9 @@ if true then return {
          },
        },
           typescript = {
+            suggest = {
+              completeFunctionCalls = false,
+            },
             inlayHints = {
               enumMemberValues = { enabled = false },
               functionLikeReturnTypes = { enabled = false },
