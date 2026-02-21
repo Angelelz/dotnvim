@@ -158,69 +158,20 @@ if true then return {
     --   },
     -- },
   -- },
+  -- Tailwindcss filetypes (vtsls config moved to typescript-tools.lua)
   {
-  "neovim/nvim-lspconfig",
-  opts = {
-    servers = {
-      tailwindcss = {
-        filetypes = {
-          "html", "css", "javascript", "javascriptreact",
-          "typescript", "typescriptreact", "vue", "svelte", "astro",
-        },
-      },
-
-      vtsls = {
-        -- cmd = { "node", "--max-old-space-size=16384", vim.fn.stdpath("data") .. "/mason/bin/vtsls", "--stdio" },
-        autoUseWorkspaceTsdk = true,
-        settings = {
-          -- Your inlay-hint disables (unchanged)
-            complete_function_calls = false,
-       vtsls = {
-         experimental = {
-           completion = {
-             enableServerSideFuzzyMatch = false,
-           },
-         },
-       },
-          typescript = {
-            suggest = {
-              completeFunctionCalls = false,
-            },
-            inlayHints = {
-              enumMemberValues = { enabled = false },
-              functionLikeReturnTypes = { enabled = false },
-              parameterNames = { enabled = "none" },
-              parameterTypes = { enabled = false },
-              propertyDeclarationTypes = { enabled = false },
-              variableTypes = { enabled = false },
-            },
-            tsserver = {
-              -- log = "verbose",
-              logDirectory = vim.fn.stdpath("cache") .. "/vtsls-logs",
-                maxTsServerMemory = 16384,
-            },
-          },
-          javascript = {
-            inlayHints = {
-              enumMemberValues = { enabled = false },
-              functionLikeReturnTypes = { enabled = false },
-              parameterNames = { enabled = "none" },
-              parameterTypes = { enabled = false },
-              propertyDeclarationTypes = { enabled = false },
-              variableTypes = { enabled = false },
-            },
-            tsserver = {
-              -- log = "verbose",
-              logDirectory = vim.fn.stdpath("cache") .. "/vtsls-logs",
-                maxTsServerMemory = 16384,
-            },
+    "neovim/nvim-lspconfig",
+    opts = {
+      servers = {
+        tailwindcss = {
+          filetypes = {
+            "html", "css", "javascript", "javascriptreact",
+            "typescript", "typescriptreact", "vue", "svelte", "astro",
           },
         },
-
       },
     },
   },
-},
   { "folke/snacks.nvim", opts = { scroll = { enabled = false } } }
 } end
 
