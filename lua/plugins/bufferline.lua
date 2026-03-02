@@ -58,8 +58,8 @@ return {
     },
   },
   keys = {
-    { "<C-.>", "<cmd>BufferLineMoveNext<cr>", { desc = "Move buffer to the right" } },
-    { "<C-,>", "<cmd>BufferLineMovePrev<cr>", { desc = "Move buffer to the left" } },
+    { "<C-.>", "<cmd>BufferLineMoveNext<cr>", desc = "Move buffer to the right" },
+    { "<C-,>", "<cmd>BufferLineMovePrev<cr>", desc = "Move buffer to the left" },
     { "<leader>bp", "<Cmd>BufferLineTogglePin<CR>", desc = "Toggle pin" },
     { "<leader>bP", "<Cmd>BufferLineGroupClose ungrouped<CR>", desc = "Delete non-pinned buffers" },
   },

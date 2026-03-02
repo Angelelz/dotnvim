@@ -40,4 +40,7 @@ vim.keymap.set("n", "<leader>ac", ":Codeium Chat<CR>", { desc = "Open codeium ch
 
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Escape terminal mode" })
 
+-- Removed: gi override. Using LazyVim's default gI (FzfLua lsp_implementations) instead.
+-- Neovim's built-in gi ("go to last insert position + insert mode") is now restored.
+
 return {}
