@@ -1,55 +1,19 @@
--- Use typescript-tools.nvim instead of vtsls for TypeScript.
--- Communicates directly with tsserver via its native protocol from Lua,
--- eliminating the Node.js wrapper overhead. Better for large monorepos.
+-- typescript-tools talks to JS tsserver.js. web-manager's `typescript`
+-- package is `@typescript/typescript6`, which does not include that file,
+-- so the client crashes on attach. LazyVim's tsgo extra uses `tsc --lsp`
+-- (TypeScript 7 native) instead; see vim.g.lazyvim_ts_lsp in options.lua.
 return {
-  -- Disable vtsls (provided by LazyVim's lang.typescript extra)
+  { "pmizio/typescript-tools.nvim", enabled = false },
   {
     "neovim/nvim-lspconfig",
-    opts = {
-      servers = {
-        vtsls = { enabled = false },
-      },
-    },
-  },
-
-  -- typescript-tools.nvim: native Lua tsserver integration
-  {
-    "pmizio/typescript-tools.nvim",
-    dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
-    ft = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
-    opts = {
-      settings = {
-        -- Spawn a separate tsserver instance for diagnostics so that
-        -- completions / go-to-definition never get blocked by diagnostic computation.
-        separate_diagnostic_server = true,
-
-        -- Only publish diagnostics when leaving insert mode (not on every keystroke)
-        publish_diagnostic_on = "insert_leave",
-
-        -- Expose all available code actions (organize imports, fix all, etc.)
-        expose_as_code_action = "all",
-
-        -- Performance tweaks for large codebases
-        complete_function_calls = false,
-        include_completions_with_insert_text = true,
-
-        -- Memory limit -- "auto" means no limit; set a number (MB) to cap it
-        tsserver_max_memory = 16384,
-
-        -- Disable code lens (experimental, can hurt performance)
-        code_lens = "off",
-
-        tsserver_file_preferences = {
-          includeInlayParameterNameHints = "none",
-          includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-          includeInlayFunctionParameterTypeHints = false,
-          includeInlayVariableTypeHints = false,
-          includeInlayVariableTypeHintsWhenTypeMatchesName = false,
-          includeInlayPropertyDeclarationTypeHints = false,
-          includeInlayFunctionLikeReturnTypeHints = false,
-          includeInlayEnumMemberValueHints = false,
-        },
-      },
-    },
+    opts = function(_, opts)
+      opts.servers = opts.servers or {}
+      -- nvim-lspconfig resolves workspace node_modules/.bin/tsc; don't wait
+      -- for a Mason tsgo install that would block attach.
+      opts.servers.tsgo = vim.tbl_deep_extend("force", opts.servers.tsgo or {}, {
+        enabled = true,
+        mason = false,
+      })
+    end,
   },
 }
